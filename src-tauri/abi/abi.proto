@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package abi;
+
+message ImageSpec {
+    repeated Spec specs = 1;
+}
+
+enum ResizeType {
+    RESIZE_TYPE_NORMAL = 0;        
+    RESIZE_TYPE_SEAM_CARVE = 1;
+}
+
+
+
+message Resize {
+    enum SampleFilter {
+        SAMPLE_FILTER_UNDEFINED = 0;
+        SAMPLE_FILTER_NEAREST = 1;
+        SAMPLE_FILTER_TRIANGLE = 2;
+        SAMPLE_FILTER_CATMULL_ROM = 3;
+        SAMPLE_FILTER_GAUSSIAN = 4;
+        SAMPLE_FILTER_LANCZOS3 = 5;
+    }
+    uint32 width = 1;
+    uint32 height = 2;
+    ResizeType rtype = 3;
+    SampleFilter filter = 4;
+}
+
+message Crop {
+    uint32 x1 = 1;
+    uint32 y1 = 2;
+    uint32 x2 = 3;
+    uint32 y2 = 4;
+}
+
+// 处理水平翻转
+message Fliph {}
+// 处理垂直翻转
+message Flipv {}
+// 处理对比度
+message Contrast { float contrast = 1; }
+// 处理滤镜
+message Filter { 
+    enum Filter {
+        UNSPECIFIED = 0;
+        OCEANIC = 1;
+        ISLANDS = 2;
+        MARINE = 3; // more: https://docs.rs/photon-rs/0.3.1/photon_rs/filters/fn.filter.html
+    } 
+    Filter filter = 1;
+}
+// 处理水印
+message Watermark { uint32 x = 1; uint32 y = 2;}
+
+
+message Spec {
+    oneof data {
+        Resize resize = 1; 
+        Crop crop = 2; 
+        Flipv flipv = 3; 
+        Fliph fliph = 4; 
+        Contrast contrast = 5; 
+        Filter filter = 6; 
+        Watermark watermark = 7;
+    }
+}
